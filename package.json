@@ -1,0 +1,27 @@
+{
+   "name": "basejs",
+   "title": "Javascript Prototyping Helper Library",
+   "description": "Methods for building object inheritance and mixing object definitions to promote consistent, reusable patterns",
+   "version": "0.1",
+   "author": {
+      "name": "Ben Olson",
+      "url": "http://bseth99.github.com/"
+   },
+   "homepage": "https://github.com/bseth99/basejs",
+   "repository": {
+      "type": "git",
+      "url": "git://github.com/bseth99/basejs.git"
+   },
+   "bugs": {
+      "url" : "http://github.com/bseth99/basejs/issues"
+   },
+   "licenses": [
+      {
+         "type": "MIT",
+         "url": "https://github.com/bseth99/basejs/blob/master/MIT-LICENSE"
+      }
+   ],
+   "dependencies": {},
+   "devDependencies": {},
+   "keywords": []
+}
