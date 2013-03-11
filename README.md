@@ -35,48 +35,48 @@ The library contains a starting object Base which contains two static members - 
 prototyping a new object definition, call Base.extend():
 
 
-   var Sub = Base.extend({
-   
-      do_something: function() {
-      
-      }
-   
-   });
+      var Sub = Base.extend({
 
-   var s = new Sub();
+         do_something: function() {
+
+         }
+
+      });
+
+      var s = new Sub();
 
 Base.extend() will return a function with a prototype that has the function do_something() defined.  Additionally, Sub is a child of Base and 
 will also contain the static members extend() and mix() which can be used to define new objects (via extend) or further enhance Sub (via mix):
 
-   var Sub2 = Sub.extend({
-   
-      do_more: function() {
-      
-      }
-   
-   });
-   
-   var s = new Sub2();
+      var Sub2 = Sub.extend({
+
+         do_more: function() {
+
+         }
+
+      });
+
+      var s = new Sub2();
 
 Now Sub2 is a child of Sub and Base.  Anything defined in Sub will also be available in Sub2.  If you want a constructor, you can either
 pass it in the object hash or define it prior to calling extend:
 
 
-   var Sub = Base.extend({
-      
-      constructor: function() {
-         // initialize
-      }
-      
-   });
+      var Sub = Base.extend({
+
+         constructor: function() {
+            // initialize
+         }
+
+      });
    
 or
 
-   var Sub = function() {
-      // initialize
-   };
-   
-   Sub = Base.extend(Sub);
+      var Sub = function() {
+         // initialize
+      };
+
+      Sub = Base.extend(Sub);
 
 However, in the latter, you'd have to setup Sub.prototype outside Base.extend().  
 
@@ -91,53 +91,53 @@ conllisions.  Constructors will automatically chain from the child up to the top
 with mixin functions will also chain.  If you want to stop this behavior, call _superStop() to cancel the chaining to the
 next parent.
 
-   var Sub1 = Base.extend({
-      
-      constructor: function() {
-         // initialize Sub1
-      },
-      
-      foo: function() {
-         // Sub1.foo
-      }
-      
-   });
-   
-   var Sub2 = Sub1.extend({
-      
-      constructor: function() {
-         // initialize Sub2
-      },
-      
-      foo: function() {
-         // override Sub1.foo
-         // Call Sub1.foo
-         this._super();
-      },
-      
-      bar: function() {
-         // Sub2.bar
-      }
-      
-   });
-   
+      var Sub1 = Base.extend({
 
-   var Sub3 = Sub2.extend({
-      
-      constructor: function() {
-         // initialize Sub3 
-         // Implicit chaining to all the ancestors
-         // Sub3 --> Sub2 --> Sub1
-         // Could call this._superStop() to prevent
-         // Sub2 and Sub1 from executing
-      },
-      
-      bar: function() {
-         // override Sub2.bar
-         // Sub2.bar will not run
-      }
-      
-   });   
+         constructor: function() {
+            // initialize Sub1
+         },
+
+         foo: function() {
+            // Sub1.foo
+         }
+
+      });
+
+      var Sub2 = Sub1.extend({
+
+         constructor: function() {
+            // initialize Sub2
+         },
+
+         foo: function() {
+            // override Sub1.foo
+            // Call Sub1.foo
+            this._super();
+         },
+
+         bar: function() {
+            // Sub2.bar
+         }
+
+      });
+
+
+      var Sub3 = Sub2.extend({
+
+         constructor: function() {
+            // initialize Sub3 
+            // Implicit chaining to all the ancestors
+            // Sub3 --> Sub2 --> Sub1
+            // Could call this._superStop() to prevent
+            // Sub2 and Sub1 from executing
+         },
+
+         bar: function() {
+            // override Sub2.bar
+            // Sub2.bar will not run
+         }
+
+      });   
    
 
 ### Object Properties ###
@@ -146,27 +146,27 @@ If there are properties defined on both the child and parent objects, the child 
 parent on all primative types.  Objects and Arrays will try to intelligently merge them when possible
 using a deep comparison method:
 
-   var Sub1 = Base.extend({
-   
-      a_string: 'string',      
-      a_object: { x: 1, y: 2 },      
-      a_array: [0,1,2]
-      
-   });
+      var Sub1 = Base.extend({
 
-   var Sub2 = Sub1.extend({
-   
-      a_string: 'string2',      
-      a_object: { y: 5, z: 3 },      
-      a_array: [0,2,2,4]
-      
-   });
+         a_string: 'string',      
+         a_object: { x: 1, y: 2 },      
+         a_array: [0,1,2]
+
+      });
+
+      var Sub2 = Sub1.extend({
+
+         a_string: 'string2',      
+         a_object: { y: 5, z: 3 },      
+         a_array: [0,2,2,4]
+
+      });
        
 The prototype for Sub2 would look like this after extending Sub1:
 
-   a_string: 'string2',  /* child overrides */
-   a_object: { x: 1, y: 5, z: 3 },  /* child overrides collisions, merges parent and child definitions */
-   a_array: [0,2,2,4] /* each matching index is checked, sub-objects will be merge recursively, primatives overwritten.  Missing indexes added */
+      a_string: 'string2',  /* child overrides */
+      a_object: { x: 1, y: 5, z: 3 },  /* child overrides collisions, merges parent and child definitions */
+      a_array: [0,2,2,4] /* each matching index is checked, sub-objects will be merge recursively, primatives overwritten.  Missing indexes added */
 
    
 ### Mixins ###
@@ -174,31 +174,31 @@ The prototype for Sub2 would look like this after extending Sub1:
 Additional objects variables can be defined with properties and functions to mix into an object definitions prototype.  This can be in the extend() call
 or using the mix() function after defining the object with extend():
 
-   var Mix = {
-      
-      var1: 10,
-      sum: function ( s ) {
-         return this.var1 + s;
-      }
-   };
+      var Mix = {
+
+         var1: 10,
+         sum: function ( s ) {
+            return this.var1 + s;
+         }
+      };
    
 This object can be mixed:
 
-   var Sub1 = Base.extend([Mix], {
-   
-      ...
-      
-   });   
+      var Sub1 = Base.extend([Mix], {
+
+         ...
+
+      });   
 
 or 
 
-   var Sub1 = Base.extend({
-   
-      ...
-      
-   });  
-   
-   Sub1.mix([Mix]);
+      var Sub1 = Base.extend({
+
+         ...
+
+      });  
+
+      Sub1.mix([Mix]);
 
 There is a difference in the two approaches.  In the former, any collisions between Mix and Sub1 will result in a chain from Sub1 to Mix and in the latter,
 Mix will be called first then Sub1.  So if both Mix and Sub1 implement a sum() function, the first case will call sum() in Sub1 first followed by sum() in
@@ -206,17 +206,17 @@ Mix.  It will call in the opposite order in the second case.
 
 More than one object can be mixed at a time:
 
-   var MixA = {      
-      run: function () {}
-   };
+      var MixA = {      
+         run: function () {}
+      };
 
-   var MixB = {      
-      run: function () {}
-   };
-   
-   var Sub1 = Base.extend([MixA, MixB], {   
-      run: function () {}     
-   }); 
+      var MixB = {      
+         run: function () {}
+      };
+
+      var Sub1 = Base.extend([MixA, MixB], {   
+         run: function () {}     
+      }); 
    
 Since all of the object define sum(), it will be automatically called on each object from the Sub1, then MixB, then MixA.  The order of presidence is from
 right to left (child first, last mixin in the array, second to last mixin, and so on.
@@ -226,28 +226,28 @@ right to left (child first, last mixin in the array, second to last mixin, and s
 
 An optional object can be provided after the prototype definition that represents static properties and/or methods to add to the object:
 
-   var Sub1 = Base.extend({
-   
-      /* prototype properties/methods */
-      
-   }, {
-      
-      /* static properties/methods */
-   
-   }); 
+      var Sub1 = Base.extend({
+
+         /* prototype properties/methods */
+
+      }, {
+
+         /* static properties/methods */
+
+      }); 
 
 
 You can also do this when adding mixins as well:
 
-   var Sub1 = Base.extend([MixA, MixB], {
-   
-      /* prototype properties/methods */
-      
-   }, {
-      
-      /* static properties/methods */
-   
-   }); 
+      var Sub1 = Base.extend([MixA, MixB], {
+
+         /* prototype properties/methods */
+
+      }, {
+
+         /* static properties/methods */
+
+      }); 
 
 
 
@@ -257,98 +257,98 @@ Example
 
 This example is taken from one of the [unit test cases](https://bseth99.github.com/basejs/tests/run.html) and shows the most common usage:
 
-   var log = [];
-   
-   var Animal = Base.extend({
+      var log = [];
 
-      constructor: function () {
-         log.push('Animal.constructor');
+      var Animal = Base.extend({
 
-         this.init();
-      },
+         constructor: function () {
+            log.push('Animal.constructor');
 
-      init: function () {
-         log.push('Animal.init');
-      },
+            this.init();
+         },
 
-      state: 'sleep',
+         init: function () {
+            log.push('Animal.init');
+         },
 
-      eat: function () {
-         log.push('Animal.eat');
+         state: 'sleep',
 
-         this.state = 'eat';
-      },
+         eat: function () {
+            log.push('Animal.eat');
 
-      sleep: function () {
-         log.push('Animal.sleep');
+            this.state = 'eat';
+         },
 
-         this.state = 'sleep';
-      },
+         sleep: function () {
+            log.push('Animal.sleep');
 
-      roam: function () {
-         log.push('Animal.roam');
+            this.state = 'sleep';
+         },
 
-         this.state = 'roam';
+         roam: function () {
+            log.push('Animal.roam');
 
-      }
+            this.state = 'roam';
 
-   });
-   
-   var Tricks = {
+         }
 
-      speak: function () {
-         log.push('Tricks.speak');
-      },
+      });
 
-      rollover: function () {
-         log.push('Tricks.rollover');
-      },
+      var Tricks = {
 
-      special: function () {
-         log.push('Tricks.special');
-      }
+         speak: function () {
+            log.push('Tricks.speak');
+         },
 
-   };
+         rollover: function () {
+            log.push('Tricks.rollover');
+         },
 
-   var Habits = {
+         special: function () {
+            log.push('Tricks.special');
+         }
 
-      chaseTail: function () {
-         log.push('Habits.chaseTail');
-      },
+      };
 
-      special: function () {
-         log.push('Habits.special');
-      }
+      var Habits = {
 
-   };
+         chaseTail: function () {
+            log.push('Habits.chaseTail');
+         },
 
-   var Dog = Animal.extend([Habits, Tricks], {
+         special: function () {
+            log.push('Habits.special');
+         }
 
-      eat: function () {
-         this._super();
-         log.push('Dog.eat');
-      },
+      };
 
-      sleep: function () {
-         log.push('Dog.sleep');
-         this._super();
-      },
+      var Dog = Animal.extend([Habits, Tricks], {
 
-      special: function () {
-         log.push('Dog.special');
-      }
+         eat: function () {
+            this._super();
+            log.push('Dog.eat');
+         },
 
-   });
+         sleep: function () {
+            log.push('Dog.sleep');
+            this._super();
+         },
 
-   var a = new Dog();
+         special: function () {
+            log.push('Dog.special');
+         }
 
-   a.eat();
-   a.sleep();
-   a.roam();
-   a.rollover();
-   a.speak();
-   a.chaseTail();
-   a.special();
-   
-   console.log( log );
-   
+      });
+
+      var a = new Dog();
+
+      a.eat();
+      a.sleep();
+      a.roam();
+      a.rollover();
+      a.speak();
+      a.chaseTail();
+      a.special();
+
+      console.log( log );
+
