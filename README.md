@@ -255,7 +255,7 @@ You can also do this when adding mixins as well:
 Example
 ---------------
 
-This example is taken from one of the [unit test cases](https://bseth99.github.com/basejs/tests/run.html) and shows the most common usage:
+This example is taken from one of the [unit test cases](http://bseth99.github.com/basejs/tests/run.html) and shows the most common usage:
 
       var log = [];
 
