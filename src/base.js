@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2012 Ben Olson (bseth99.github.com/basejs)
+ * Copyright (c) 2012 Ben Olson (https://github.com/bseth99/basejs)
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
