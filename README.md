@@ -8,7 +8,13 @@ mixing object definitions to promote consistent, reusable
 patterns.  The objective of this project was to learn the
 different concepts related to Javascript Prototypal Inheritance
 add extra functionality where there seemed to be a gap in the
-built-in features.
+built-in features.  You can read more about the fundamentals
+that went into developing this library on [my blog](http://benknowscode.wordpress.com/2013/03/12/navigating-the-mysterious-world-of-javascript-inheritance/).
+
+Specifically, I'm using this as a drop-in
+replacement for the `Backbone.extend` method to enable adding
+functionality via a reusable object library.  
+
 
 ### Features ###
 
