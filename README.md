@@ -13,9 +13,11 @@ built-in features.
 ### Features ###
 
 - Does not depend on any other library
-- Provides a root object definition Base that can be extended to create new object classes via extend() method
-- Handles function collisions and creates _super(), _superApply(), and _superStop() to enable invoking parent functionality seemlessly in child implementation
+- Provides a root object definition Base that can be extended to create new object classes via `extend()` method
+- Handles function collisions and creates `_super()`, `_superApply()`, and `_superStop()` to enable invoking parent functionality seemlessly in child implementation
 - Allows additional objects to be "mixed" into the object prototype and chains function name collisions automatically
+- Adds support to ensure constructor is called with "new"
+- Inserts a `_guid` property on each instance to help with debugging
 
 
 Usage
@@ -29,10 +31,10 @@ Then include it in your HTML like so:
     <script type="text/javascript" src="/path/to/base.js"></script>
 
 
-### Basic ###
+### Basics ###
 
-The library contains a starting object Base which contains two static members - extend() and mix().  To start
-prototyping a new object definition, call Base.extend():
+The library contains a starting object Base which contains two static members - `extend()` and `mix()`.  To start
+prototyping a new object definition, call `Base.extend()`:
 
 
       var Sub = Base.extend({
@@ -45,8 +47,8 @@ prototyping a new object definition, call Base.extend():
 
       var s = new Sub();
 
-Base.extend() will return a function with a prototype that has the function do_something() defined.  Additionally, Sub is a child of Base and 
-will also contain the static members extend() and mix() which can be used to define new objects (via extend) or further enhance Sub (via mix):
+`Base.extend()` will return a function with a prototype that has the function `do_something()` defined.  Additionally, `Sub` is a child of `Base` and 
+will also contain the static members `extend()` and `mix()` which can be used to define new objects (via `extend`) or further enhance `Sub` (via `mix`):
 
       var Sub2 = Sub.extend({
 
@@ -58,7 +60,7 @@ will also contain the static members extend() and mix() which can be used to def
 
       var s = new Sub2();
 
-Now Sub2 is a child of Sub and Base.  Anything defined in Sub will also be available in Sub2.  If you want a constructor, you can either
+Now `Sub2` is a child of `Sub` and `Base`.  Anything defined in `Sub` will also be available in `Sub2`.  If you want a constructor, you can either
 pass it in the object hash or define it prior to calling extend:
 
 
@@ -78,17 +80,17 @@ or
 
       Sub = Base.extend(Sub);
 
-However, in the latter, you'd have to setup Sub.prototype outside Base.extend().  
+However, in the latter, you'd have to setup `Sub.prototype` outside `Base.extend()`.  
 
 
 ### Overrides and Chaining ###
 
 Whenever there is an collision between a parent and child method, the library will wrap the colliding methods and
-enable a means to call the parent's method from the child method via the _super() function.  The _super() function
+enable a means to call the parent's method from the child method via the `_super()` function.  The `_super()` function
 refers only to the immediate parent of the child object.  If more than one object is in the chain, each ancester needs
-to explicitly call _super() to continue invoking the next parent in the chain.  The exception is constructor and mixin
+to explicitly call `_super()` to continue invoking the next parent in the chain.  The exception is constructor and mixin
 conllisions.  Constructors will automatically chain from the child up to the top-most parent automatically.  Collisions 
-with mixin functions will also chain.  If you want to stop this behavior, call _superStop() to cancel the chaining to the
+with mixin functions will also chain.  If you want to stop this behavior, call `_superStop()` to cancel the chaining to the
 next parent.
 
       var Sub1 = Base.extend({
@@ -162,7 +164,7 @@ using a deep comparison method:
 
       });
        
-The prototype for Sub2 would look like this after extending Sub1:
+The prototype for `Sub2` would look like this after extending Sub1:
 
       a_string: 'string2',  /* child overrides */
       a_object: { x: 1, y: 5, z: 3 },  /* child overrides collisions, merges parent and child definitions */
@@ -171,8 +173,8 @@ The prototype for Sub2 would look like this after extending Sub1:
    
 ### Mixins ###
 
-Additional objects variables can be defined with properties and functions to mix into an object definitions prototype.  This can be in the extend() call
-or using the mix() function after defining the object with extend():
+Additional objects variables can be defined with properties and functions to mix into an object definitions prototype.  This can be in the `extend()` call
+or using the `mix()` function after defining the object with `extend()`:
 
       var Mix = {
 
@@ -200,9 +202,64 @@ or
 
       Sub1.mix([Mix]);
 
-There is a difference in the two approaches.  In the former, any collisions between Mix and Sub1 will result in a chain from Sub1 to Mix and in the latter,
-Mix will be called first then Sub1.  So if both Mix and Sub1 implement a sum() function, the first case will call sum() in Sub1 first followed by sum() in
-Mix.  It will call in the opposite order in the second case.
+There is a difference in the two approaches.  In the former, any collisions between `Mix` and `Sub1` will result in a chain from `Sub1` to `Mix` and in the latter,
+`Mix` will be called first then `Sub1`.  So if both `Mix` and `Sub1` implement a `sum()` function, the first case will call `sum()` in `Sub1` first followed by `sum()` in
+`Mix`.  It will call in the opposite order in the second case.  The benefit of using `mix()` directly is you can control how collisions are handled.  By default, functions
+are setup to automatically chain to each other and properties are merged (Objects and Arrays).  The option second argument to `mix()` enables finer control of this 
+behavior by allowing a hash that specifies various options.  The general form of `mix` is:
+
+      <Function>.mix(mixins, options);
+      
+      mixins = Array // ie [Mix1..MixN]
+      options = 
+      
+       {
+         functions: < true|false|Object >,
+         properties: < true|false|Object >
+       }
+       
+For functions, `true` means to auto-chain the collisions (`_superStop` can be to halt the chaining), `false` indicates it will be done manually via `_super`.  An
+object hash of each function can be provided to override the behavior on a function-by-function basis.  If you have the following function defined:
+
+      var Mix = {
+         foo: function () {},
+         bar: function () {}
+      };
+      
+Then, `options.functions` can be set:
+
+      {
+         foo: false,         
+         bar: true
+      }
+
+To cause `foo` not to auto-chain and `bar` to auto-chain.  The `properties` option follows the same rules.  In this case, `true` will attempt to merge collisions,
+`false` will not, and an hash of properties will allow individual property-by-property control of the behavior.
+
+A complete example that overrides at the function/property level might look like this:
+
+      var Mix = {
+         foo: function () {},
+         bar: function () {},
+         prop1: { x: 1, y: 2 },
+         prop2: [0,1,2]
+      };
+      
+      var Sub1 = Base.extend({
+         ...
+      });  
+
+      Sub1.mix([Mix], {
+         functions: {
+            foo: false,
+            bar: true
+         },
+         properties: {
+            prop1: true,
+            prop2: false
+         }
+      });
+      
 
 More than one object can be mixed at a time:
 
@@ -218,8 +275,43 @@ More than one object can be mixed at a time:
          run: function () {}     
       }); 
    
-Since all of the object define sum(), it will be automatically called on each object from the Sub1, then MixB, then MixA.  The order of presidence is from
+Since all of the object define `sum()`, it will be automatically called on each object from the `Sub1`, then `MixB`, then `MixA`.  The order of presidence is from
 right to left (child first, last mixin in the array, second to last mixin, and so on.
+
+Finally, when using `extend()`, mixins can also be functions, with constructors and a prototype.  As each mixin is added, the contructor will be added to the call
+chain after both the child and parent constructors are called.  When multiple mixins have contructors defined, the presidence is from left to right based on how they
+are passed to `extend()` in the array:
+
+      
+      var MixA = function () {
+         // constructor for MixA
+      }
+      
+      MixA.prototype.run = function () {
+         // define a function on the prototype
+      }
+      
+      var MixB = {
+         construnctor: function () {
+            // constructor for MixB
+         },
+         
+         run: function () {
+         }
+      };
+      
+      var Sub1 = Base.extend([MixA, MixB], {   
+         construnctor: function () {
+            // constructor for Sub1
+         }
+      }); 
+      
+Here, both alternatives for defining the constructor are shown.  `Sub1.constructor` will execute first, followed by `Base.constructor` (which is empty), then 
+`MixB.constructor`, and finally, `MixA.constructor`.
+
+You might be tempted to create mixins from a common ancestor.  Be careful with this approach when mixing in two or more mixins derived from the same base object.
+Since there will most likely be collisions with common functions, they will be setup to chain.  It is possible cause duplicate calls due to the overlap.  At this
+time, nothing in the library will detect this condition and resolve the extra calls.
 
    
 ### Static Methods/Properties ###

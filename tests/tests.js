@@ -1,6 +1,10 @@
 
 module("Prototyping Checks");
 
+/**
+* Validate the starting Base object is setup as expected.
+*/
+
 test( "Check for Base and Confirm members", function() {
 
    ok( Base instanceof Object, "Base is an instance of Object" );
@@ -23,6 +27,10 @@ test( "Check for Base and Confirm members", function() {
    ok( (p === 0), "Base has an empty prototype" );
 });
 
+/**
+* Check single inheritance.  Validate parent is not affected by
+* the prototyping process
+*/
 
 test( "Extend Sub1 from Base and Confirm members", function() {
 
@@ -69,6 +77,11 @@ test( "Extend Sub1 from Base and Confirm members", function() {
    deepEqual( Sub1.prototype.a_object, { x: 1 }, "Sub1 prototype member a_object has correct value" );
 
 });
+
+/**
+* Check multiple inheritance.  Validate parent is not affected by
+* the prototyping process
+*/
 
 test( "Extend Sub2 from Sub1 ensure Sub1 is unchanged", function() {
 
@@ -122,6 +135,9 @@ test( "Extend Sub2 from Sub1 ensure Sub1 is unchanged", function() {
 
 });
 
+/**
+* Check multiple inheritance.  Validate property merging
+*/
 
 test( "Extend Sub2 from Sub1 and Confirm members", function() {
 
@@ -193,6 +209,10 @@ test( "Extend Sub2 from Sub1 and Confirm members", function() {
 
 });
 
+/**
+* Make sure static members are retained/added during prototyping
+*/
+
 test( "Test static members and ensure they are preserved", function() {
 
    var Sub1 = Base.extend({
@@ -246,6 +266,11 @@ test( "Test static members and ensure they are preserved", function() {
 
 });
 
+/**
+* Check that adding mixins results in the expected
+* definition
+*/
+
 test( "Test mixins are added", function() {
 
    var Mix1 = {
@@ -282,6 +307,10 @@ test( "Test mixins are added", function() {
 });
 
 module("Instance Checks");
+
+/**
+* Validate that instanceof will be true as expected
+*/
 
 test( "Validate prototype chain is intact", function() {
 
@@ -437,3 +466,50 @@ test( "Validate call sequencing", function() {
 
 });
 
+/**
+* Check that function parameters and return values
+* are maintained across the call chains
+*/
+test( "Validate arguments and return values", function() {
+
+   var Mix1 = {
+
+      all: function ( x ) { return x; },
+      undef: function ( x ) { return x; },
+      undef2: function ( x ) { },
+      args1: function ( x ) { return x; },
+      args2: function ( ) { }
+
+   };
+
+   var Mix2 = {
+
+      all: function ( x ) { return x; },
+      skip: function ( x ) { return x; },
+      undef: function ( x ) { },
+      undef2: function ( x ) { return x; },
+      args1: function ( ) { },
+      args2: function ( x ) { return x; }
+
+   };
+
+   var Sub1 = Base.extend([Mix2, Mix1], {
+
+      all: function ( x ) { return x; },
+      skip: function ( x ) { return x; },
+      undef: function ( x ) { return x; },
+      undef2: function ( x ) { return x; },
+      args2: function ( x ) { return x; }
+
+   });
+
+   var s = new Sub1();
+
+   equal( s.all(1), 1, "all() returned the expected result" );
+   equal( s.skip(4), 4, "skip() returned the expected result" );
+   equal( s.undef(5), 5, "undef() returned the expected result" );
+   equal( s.undef2(7), 7, "undef2() returned the expected result" );
+   equal( s.args1(2), 2, "args1() returned the expected result" );
+   equal( s.args2(3), 3, "args2() returned the expected result" );
+
+});
