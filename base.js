@@ -426,6 +426,5 @@
    // Exposes extend() to build new object definitions
    //
    window.Base = Factory({});
-   window.Base.VERSION = '0.1.1';
 
 })();
