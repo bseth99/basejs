@@ -120,9 +120,9 @@
    *        }
    */
 
-   var chain = function(target, source, options) {
+   var chain = function(target, source, settings) {
 
-      var options = options || {};
+      var options = settings || {};
 
       options = {
             functions: typeof(options.functions) == 'undefined' ? true : options.functions,
@@ -144,7 +144,8 @@
                   // by wrapping in another function to create a new parent scope
                   target[p] = (function (_base, _call, _continue) {
 
-                        var _super = function () { _base.apply(this, arguments); },
+                        var __continue = _continue,
+                            _super = function () { _base.apply(this, arguments); },
                             _superStop = function () { _continue = false; },
                             _superApply = function ( args ) { _base.apply(this, args); };
 
@@ -155,12 +156,14 @@
                                __superStop = this._superStop,
                                __superApply = this._superApply;
 
+                           _continue = __continue;
+
                            this._super = _super;
                            this._superApply = _superApply;
                            if ( _continue )
                               this._superStop = _superStop;
 
-                           var _ret = _call.apply(this, arguments);
+                           _ret = _call.apply(this, arguments);
 
                            if ( _continue ) {
                               __ret = _super.apply(this, arguments);
@@ -311,7 +314,7 @@
 
       csubr = function () { };
       csubr.prototype = parent.prototype;
-      child.prototype = new csubr;
+      child.prototype = new csubr();
 
       // Attach static helpers
       // Merge with parent
@@ -423,5 +426,6 @@
    // Exposes extend() to build new object definitions
    //
    window.Base = Factory({});
+   window.Base.VERSION = '0.1.1';
 
 })();
