@@ -120,9 +120,9 @@
    *        }
    */
 
-   var chain = function(target, source, options) {
+   var chain = function(target, source, settings) {
 
-      var options = options || {};
+      var options = settings || {};
 
       options = {
             functions: typeof(options.functions) == 'undefined' ? true : options.functions,
@@ -163,7 +163,7 @@
                            if ( _continue )
                               this._superStop = _superStop;
 
-                           var _ret = _call.apply(this, arguments);
+                           _ret = _call.apply(this, arguments);
 
                            if ( _continue ) {
                               __ret = _super.apply(this, arguments);
@@ -314,7 +314,7 @@
 
       csubr = function () { };
       csubr.prototype = parent.prototype;
-      child.prototype = new csubr;
+      child.prototype = new csubr();
 
       // Attach static helpers
       // Merge with parent
@@ -426,5 +426,6 @@
    // Exposes extend() to build new object definitions
    //
    window.Base = Factory({});
+   window.Base.VERSION = '0.1.1';
 
 })();
