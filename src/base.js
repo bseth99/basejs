@@ -144,7 +144,8 @@
                   // by wrapping in another function to create a new parent scope
                   target[p] = (function (_base, _call, _continue) {
 
-                        var _super = function () { _base.apply(this, arguments); },
+                        var __continue = _continue,
+                            _super = function () { _base.apply(this, arguments); },
                             _superStop = function () { _continue = false; },
                             _superApply = function ( args ) { _base.apply(this, args); };
 
@@ -154,6 +155,8 @@
                                __super = this._super,
                                __superStop = this._superStop,
                                __superApply = this._superApply;
+
+                           _continue = __continue;
 
                            this._super = _super;
                            this._superApply = _superApply;
