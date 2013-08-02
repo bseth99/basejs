@@ -3,7 +3,10 @@
   "version": "0.1.3",
   "ignore": [
     "src",
-    "tests"
+    "tests",
+    ".jshintrc",
+    ".gitignore",
+    "build.sh"
   ],
   "dependencies": {
   }
