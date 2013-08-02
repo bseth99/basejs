@@ -26,7 +26,15 @@
  *
  */
 
-(function (undefined) {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD.
+        define(factory);
+    } else {
+        // Browser globals
+        root.Base = factory();
+    }
+}(this, function (undefined) {
 
    var isArray = function( v ) {
       return (v && Object.prototype.toString.call( v ) === '[object Array]');
@@ -425,6 +433,6 @@
    // Make the root object definition
    // Exposes extend() to build new object definitions
    //
-   window.Base = Factory({});
+   return Factory({});
 
-})();
+}));
