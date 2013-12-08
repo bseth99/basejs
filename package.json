@@ -2,7 +2,7 @@
    "name": "BaseJS",
    "title": "Javascript Prototyping Helper Library",
    "description": "Methods for building object inheritance and mixing object definitions to promote consistent, reusable patterns",
-   "version": "0.1.3",
+   "version": "0.1.4",
    "author": {
       "name": "Ben Olson",
       "url": "http://bseth99.github.com/"

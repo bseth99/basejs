@@ -153,9 +153,9 @@
                   target[p] = (function (_base, _call, _continue) {
 
                         var __continue = _continue,
-                            _super = function () { _base.apply(this, arguments); },
+                            _super = function () { return _base.apply(this, arguments); },
                             _superStop = function () { _continue = false; },
-                            _superApply = function ( args ) { _base.apply(this, args); };
+                            _superApply = function ( args ) { return _base.apply(this, args); };
 
                         var _proxy = function () {
 
